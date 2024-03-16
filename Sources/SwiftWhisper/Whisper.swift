@@ -129,11 +129,13 @@ public class Whisper {
         DispatchQueue.global(qos: .userInitiated).async {
             print("start whisper_full")
             whisper_full(self.whisperContext, self.params.whisperParams, audioFrames, Int32(audioFrames.count))
+            print("start whisper_full_n_segment")
 
             let segmentCount = whisper_full_n_segments(self.whisperContext)
 
             var segments: [Segment] = []
             segments.reserveCapacity(Int(segmentCount))
+            print("start forloop")
 
             for index in 0..<segmentCount {
                 guard let text = whisper_full_get_segment_text(self.whisperContext, index) else { continue }
@@ -161,6 +163,7 @@ public class Whisper {
                 }
             } else {
                 DispatchQueue.main.async {
+                    print("start delegate")
                     self.delegate?.whisper(self, didCompleteWithSegments: segments)
                     wrappedCompletionHandler(.success(segments))
                 }
