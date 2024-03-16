@@ -104,7 +104,9 @@ public class Whisper {
     }
 
     public func transcribe(audioFrames: [Float], completionHandler: @escaping (Result<[Segment], Error>) -> Void) {
+        print("start transcribe")
         prepareCallbacks()
+        print("end prepareCallbacks")
 
         let wrappedCompletionHandler: (Result<[Segment], Error>) -> Void = { result in
             self.cleanupCallbacks()
@@ -123,7 +125,9 @@ public class Whisper {
         inProgress = true
         frameCount = audioFrames.count
 
+        print("start dispatch prepareCallbacks")
         DispatchQueue.global(qos: .userInitiated).async {
+            print("start whisper_full")
             whisper_full(self.whisperContext, self.params.whisperParams, audioFrames, Int32(audioFrames.count))
 
             let segmentCount = whisper_full_n_segments(self.whisperContext)
